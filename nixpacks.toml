@@ -1,0 +1,26 @@
+```toml
+[phases.setup]
+nixPkgs = ['nodejs_20', 'bun', 'openssl']
+nixLibs = ['gcc-unwrapped', 'libuuid', 'libGL']
+nixOverlays = ['https://github.com/railwayapp/nix-npm-overlay/archive/main.tar.gz']
+aptPkgs = ['curl', 'wget']
+
+[variables]
+NIXPACKS_METADATA = 'node'
+NODE_ENV = 'production'
+NPM_CONFIG_PRODUCTION = 'false'
+
+[phases.install]
+dependsOn = ['setup']
+cmds = ['bun i --no-save']
+cacheDirectories = ['/root/.bun']
+paths = ['/app/node_modules/.bin']
+
+[phases.build]
+dependsOn = ['install']
+cmds = ['bun run build']
+cacheDirectories = ['.next/cache', 'node_modules/.cache']
+
+[start]
+cmd = 'bun run start'
+```
